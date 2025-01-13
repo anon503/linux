@@ -1,0 +1,41 @@
+name: repo-sync
+on:
+  schedule: 
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+  push:
+
+jobs:
+  repo-sync:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: repo-sync
+      run: |
+        git fetch
+        git remote add next https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+        git remote add stable-rc https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+        git remote add stable https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
+        git remote add rpi https://github.com/raspberrypi/linux.git
+        git remote add tor https://github.com/torvalds/linux.git
+        git checkout linux-6.6
+        git fetch stable-rc linux-6.6.y
+        git reset --hard stable-rc/linux-6.6.y
+        git push -f
+        git checkout linux-6.12
+        git fetch stable-rc linux-6.12.y
+        git reset --hard stable-rc/linux-6.12.y
+        git push -f
+        git checkout linux-next
+        git fetch next master
+        git reset --hard next/master
+        git push -f
+      env:
+        github_token: ${{ secrets.PAT }}
+    - name: Delete workflow runs
+      uses: Mattraks/delete-workflow-runs@v2
+      with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          retain_days: 0
+          keep_minimum_runs: 0
