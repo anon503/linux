@@ -31,7 +31,7 @@ jobs:
         git fetch next master
         git reset --hard next/master
         git push -f
-        git checkout master
+        git checkout --track origin/master
         git fetch tor master
         git reset --hard tor/master
         git push -f
