@@ -12,7 +12,6 @@ jobs:
     - uses: actions/checkout@v4
     - name: repo-sync
       run: |
-        git config --global fetch.parallel 8
         git fetch
         git remote add next https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
         git remote add stable-rc https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
